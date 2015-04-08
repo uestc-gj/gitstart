@@ -14,6 +14,9 @@ class Student( object ):
 '''
 class animal( object ):
     def run( self ):
+        '''
+        This is a function shows animal could run as human beings!
+        '''
         print 'Animal is running...'
     def run_twice( animal ):
         animal.run()
