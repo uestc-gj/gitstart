@@ -29,6 +29,7 @@ class TreeViewFilterWindow(Gtk.Window):
         self.software_liststore = Gtk.ListStore(str, int, str)
         for software_ref in software_list:
             self.software_liststore.append(list(software_ref))
+        #return the location of the newly inserted row
         self.current_filter_language = None
 
         #Creating the filter, feeding it with the liststore model
