@@ -5,10 +5,11 @@
 class Student( object ):
 	def __init__(self, name, score):
 		self.__name = name
-		self.__score = score
+		self._score = score
 
 	def get_grade(self):
-		print '%s\'s grade is: %s' % (self.__name, self.__score)
+		print '%s\'s grade is: %s' % (self.__name, self._score)
+
 '''
 继承和多态
 '''
@@ -34,3 +35,26 @@ class Dog( animal ):
 #这就是著名的“开闭”原则：
 #对扩展开放：允许新增Animal子类；
 #对修改封闭：不需要修改依赖Animal类型的run_twice()等函数。
+
+
+class BaseClass(object):    
+    def __init__(self):
+        self.name = 'BaseClass'
+        print('BaseCalss: Constructor called')
+    def getname(self):
+        print('BaseCalss: self name equals ' + self.name)
+ 
+class DerivedClass(BaseClass):
+    def __init__(self):
+        #派生类定义__init__()时不会自动调用基类的__init__()方法因此要调用基类的
+        #__init__()方法进行恰当的初始化
+        BaseClass.__init__(self)
+        #super(DerivedClass, self).__init__()
+        print('DerivedClass: Constructor called')
+ 
+if __name__ == '__main__':
+    class1 = BaseClass()
+    class1.getname()
+    
+    class2 = DerivedClass()
+    class2.getname()
