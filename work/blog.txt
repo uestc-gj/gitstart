@@ -1,5 +1,6 @@
 发送邮件：http://justcoding.iteye.com/blog/918933
 接收邮件：http://justcoding.iteye.com/blog/918934
+http://blog.sina.com.cn/s/blog_72603eac0100xrqd.html
 
 简易邮件查看器: http://www.oschina.net/code/snippet_70229_2384
 
