@@ -1,47 +1,58 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#导入smtplib和MIMEText
+#!/usr/bin/python
 
 import smtplib
+from Account import *
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 '''
-要发给谁，这里发给2个人
+Test data
+
+
+username = "916311350@qq.com"
+password = "shuigaojian"
+
+SERVER = 'smtp.qq.com'
+sender = root.username
+receivers = ['linjiangxiangj@sina.cn']
+
+SUBJECT = u'测试UTF8编码'
+TEXT = u'ABCDEFG一二三四五六七'
 '''
-mailto_list=["winson.zhou@gmail.com","122167504@qq.com"]
-'''
-设置服务器，用户名、口令以及邮箱的后缀
-'''
-mail_host="smtp.126.com"
-mail_user="lvs071103"
-mail_pass="*************"
-mail_postfix="126.com"
-'''
------------------initial finished-------------------
-'''
-def send_mail(to_list,sub,content):
-    '''
-    to_list:发给谁
-    sub:主题
-    content:内容
-    send_mail("lvs071103@126.com","sub","content")
-    '''
-    address=mail_user+"&lt;"+mail_user+"@"+mail_postfix+"&gt;"
-    msg = MIMEText(content)
-    msg['Subject'] = sub
-    msg['From'] = address
-    msg['To'] = ";".join(to_list)
+def email_pack(sender, receivers, SUBJECT, TEXT):
+    print "packing...\n"
+    msg = MIMEMultipart('alternative')
+    # 注意包含了非ASCII字符，需要使用unicode
+    msg['Subject'] = SUBJECT
+    msg['From'] = sender
+    msg['To'] = ', '.join(receivers)
+    part = MIMEText(TEXT, 'plain', 'utf-8')
+    msg.attach(part)
+    return msg
+
+def email_send(user, receivers, SUBJECT, TEXT):
     try:
-        s = smtplib.SMTP()
-        s.connect(mail_host)
-        s.login(mail_user,mail_pass)
-        s.sendmail(address, to_list, msg.as_string())
-        s.close()
-        return True
+        sender = user.username
+        #authentication
+        server = smtplib.SMTP_SSL()
+        server.connect(user.sendserver)
+        server.login(user.username,user.password)
+
+        #make prepare content
+        msg = email_pack(sender, receivers, SUBJECT, TEXT)
+        server.sendmail(sender, receivers, msg.as_string())#.encode('ascii'))        
+        print "Successfully sent email\n"
+        server.quit()
     except Exception, e:
         print str(e)
-        return False
-if __name__ == '__main__':
-    if send_mail(mailto_list,"测试","这是一个测试邮件，将来会被用作程序的邮件警报"):
-        print "发送成功"
-    else:
-        print "发送失败"
+        print "Error: unable to send email\n"
+
+if __name__ == "__main__":
+    print "This is my mail send box\n"
+    #prepare data info
+    root = Account("916311350@qq.com")
+    receivers = ['linjiangxiangj@sina.cn']
+    SUBJECT = u'测试UTF8编码'
+    TEXT = u'ABCDEFG一二三四五六七'
+    #call send func
+    email_send(root, receivers, SUBJECT, TEXT)

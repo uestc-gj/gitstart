@@ -1,4 +1,5 @@
 from gi.repository import Gtk,Pango
+from sendemail import *
 
 class Loader(object):
     '''
@@ -73,12 +74,21 @@ class Display(Gtk.Window):
         treeView = self.mainloader.treeview_account
         fixed = self.mainloader.fixed
         
-        #Creating the ListStore model
+        #Creating the ListStore model, datas are from account file
         self.model = Gtk.ListStore(str)
-        #self.model.append(["++ Add ++"])
-        self.model.append(["916311350@qq.com"])
-        self.model.append(["Charles@sina.cn"])
-        self.model.append(["alfred@163.com"])
+        #文件处理可以继续优化，密码需要特殊处理
+        fh = open('./Accounts.txt')
+        for line in fh.readlines():
+            username = line.split(':',1)
+            if username[0] == "account":
+                checkname = username[1].strip()
+                self.model.append([checkname])
+
+        fh.close()
+
+        #self.model.append(["916311350@qq.com"])
+        #self.model.append(["Charles@sina.cn"])
+        #self.model.append(["alfred@163.com"])
 
         #Sets the model for TreeView
         treeView.set_model(self.model)
@@ -138,11 +148,31 @@ class Display(Gtk.Window):
     def Toolbar_subwindow(self):
         #show subview
         toolbar = self.subloader.toolbar
-        box = self.subloader.box
+        comboboxtext = self.subloader.comboboxtext
 
         button_send = Gtk.ToolButton.new(None, "Send Email")
         button_send.connect("clicked", self.on_send_button_clicked)
         toolbar.insert(button_send, 0)
+        toolbar.insert(Gtk.SeparatorToolItem(), 1)
+
+        comboboxtext.set_entry_text_column(0)
+        comboboxtext.connect("changed", self.on_currency_combo_changed)
+        fh = open('./Accounts.txt')
+        for line in fh.readlines():
+            username = line.split(':',1)
+            if username[0] == "account":
+                checkname = username[1].strip()
+                comboboxtext.append_text(checkname)
+
+        fh.close()
+        '''
+        currencies = ["Euro", "US Dollars", "British Pound", "Japanese Yen",
+                        "Russian Ruble", "Mexican peso", "Swiss franc"]
+        comboboxtext.set_entry_text_column(0)
+        for currency in currencies:
+            comboboxtext.append_text(currency)
+        '''
+
 
     '''
     followed control part
@@ -160,6 +190,11 @@ class Display(Gtk.Window):
     def on_send_button_clicked(self, widget):
         print ("send an email!")
 
+    def on_currency_combo_changed(self, combo):
+        sender = combo.get_active_text()
+        if sender != None:
+            print("sender is : %s" % sender)
+    
     def on_account_selection_changed(self, selection):
         model, treeiter = selection.get_selected()
         print "Please show the received emails of", model[treeiter][0]
