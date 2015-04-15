@@ -1,13 +1,4 @@
-from gi.repository import Gtk, Pango
-
-
-class MyDialog(Gtk.Dialog):
-    def __init__(self, parent):
-        Gtk.Dialog.__init__(self, "MY DIALOG", parent, 0,
-                            buttons=(
-                                Gtk.STOCK_OK, Gtk.ResponseType.OK,
-                                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
-        self.show_all()
+from gi.repository import Gtk
 
 
 class MyWindow(Gtk.Window):
@@ -20,21 +11,44 @@ class MyWindow(Gtk.Window):
         self.add(hbox)
         
         button = Gtk.Button("cliked me")
-        button.connect("clicked", self.on_clicked_me)
+        button.connect("clicked", self.create_a_normal_dialog,"Good morning")
         hbox.pack_start(button, True, True, 0)
 
     def on_clicked_me(self, widget):
-        dialog = MyDialog(self)
-        response = dialog.run()
-        if response == Gtk.ResponseType.CANCEL:
-            print("The Cancel button was clicked")
-            dialog.destroy()
-        elif response == Gtk.ResponseType.OK:
-            print("The Dialog was hidden")
-            dialog.hide()
+        '''
+        type:
+          GTK_MESSAGE_INFO(Gtk.MessageType.INFO)
+          GTK_MESSAGE_WARNING
+          GTK_MESSAGE_QUESTION
+          GTK_MESSAGE_ERROR
+        buttontype:
+            GTK_BUTTON_OK
+            GTK_BUTTON_CLOSE
+            GTK_BUTTON_CANCEL
+            GTK_BUTTON_YES_NO
+            GTK_BUTTON_OK_CANCEL
+            GTK_BUTTON_NONE
+        '''
+        dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.WARNING,
+            Gtk.ButtonsType.OK_CANCEL, "This is an ERROR MessageDialog")
+        dialog.format_secondary_text(
+            "And this is the secondary text that explains things.")
+        dialog.run()
+        print("ERROR dialog closed")
 
+        dialog.destroy()
         
+    def create_a_normal_dialog(self, widget, str):
+        dialog = Gtk.Dialog("Message", self)
+        dialog.set_default_size(250, 30)
+        label = Gtk.Label()
+        label.set_markup(" <big> "+ str +"</big> ")
+        box = dialog.get_content_area()
+        box.add(label)
+        dialog.show_all()
+        dialog.run()
 
+        dialog.destroy()
 
 win = MyWindow()
 win.connect("delete-event", Gtk.main_quit)

@@ -159,3 +159,5 @@ try:
 except poplib.error_proto,e:  
     print "Login failed:",e  
     sys.exit(1)
+
+#if __name__ == "__main__":

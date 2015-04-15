@@ -20,6 +20,7 @@ class ComboBoxWindow(Gtk.Window):
         name_combo = Gtk.ComboBox.new_with_model_and_entry(name_store)
         name_combo.connect("changed", self.on_name_combo_changed)
         name_combo.set_entry_text_column(1)
+        
         vbox.pack_start(name_combo, False, False, 0)
 
         country_store = Gtk.ListStore(str)
@@ -34,6 +35,7 @@ class ComboBoxWindow(Gtk.Window):
         renderer_text = Gtk.CellRendererText()
         country_combo.pack_start(renderer_text, True)
         country_combo.add_attribute(renderer_text, "text", 0)
+        country_combo.set_active(1)
         vbox.pack_start(country_combo, False, False, True)
 
         currencies = ["Euro", "US Dollars", "British Pound", "Japanese Yen",
@@ -43,6 +45,7 @@ class ComboBoxWindow(Gtk.Window):
         currency_combo.connect("changed", self.on_currency_combo_changed)
         for currency in currencies:
             currency_combo.append_text(currency)
+        currency_combo.set_active(1)
 
         vbox.pack_start(currency_combo, False, False, 0)
 

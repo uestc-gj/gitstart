@@ -41,11 +41,34 @@ def email_send(user, receivers, SUBJECT, TEXT):
         #make prepare content
         msg = email_pack(sender, receivers, SUBJECT, TEXT)
         server.sendmail(sender, receivers, msg.as_string())#.encode('ascii'))        
-        print "Successfully sent email\n"
+        print "Successfully send email\n"
         server.quit()
+        return True
     except Exception, e:
         print str(e)
         print "Error: unable to send email\n"
+        return False
+
+def email_verification( username, password ):
+    '''
+    :param username:
+    :param password:
+    :return:False:invalid address
+            True: valid address
+    '''
+    try:
+        server = username.split('@')
+        sendserver = "smtp."+server[1]
+        #authentication
+        server = smtplib.SMTP_SSL()
+        server.connect(sendserver)
+        server.login(username, password)
+
+        return True
+    except Exception, e:
+        print str(e)
+        print "Error: invalid email address\n"
+        return False
 
 if __name__ == "__main__":
     print "This is my mail send box\n"
@@ -55,4 +78,4 @@ if __name__ == "__main__":
     SUBJECT = u'测试UTF8编码'
     TEXT = u'ABCDEFG一二三四五六七'
     #call send func
-    email_send(root, receivers, SUBJECT, TEXT)
+    #email_send(root, receivers, SUBJECT, TEXT)

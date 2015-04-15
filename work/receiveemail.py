@@ -7,26 +7,30 @@ import cStringIO
 import base64
 import os
 
-def showMessage( msg ):
+def get_content( msg ):
     if msg.is_multipart():
+        #contentlist = list()
         for part in msg.get_payload():
-            showMessage( part )
+            content = get_content( part)
+            #contentlist.append(content)
+        #return contentlist
     else:
         types = msg.get_content_type()
         if types=='text/plain':
             try:
-               body =msg.get_payload(decode=True)
-               print body
+               body = msg.get_payload(decode=True)
+               #print body
             except:
                print '[*001*]BLANK'
         elif types=='text/base64':
             try:
                body = base64.decodestring(msg.get_payload())
-               print body
+               #print body
             except:
                print '[*001*]BLANK'
-               
-def PareMessageAttachMent( msg ):
+        return body
+
+def get_attachment( msg ):
     path = "E:/email/"
     for part in msg.walk():
         contenttype = part.get_content_type()
@@ -67,8 +71,8 @@ def email_get( user ,recentnumber = 10):
         p.user(user.username)
         p.pass_(user.password)
         totalNum, totalSize = p.stat() #返回一个元组:(邮件数,邮件尺寸)
-        print "Login success"
-        print "totalNum, totalSize:",totalNum, totalSize,"\n"
+        #print "Login success"
+        #print "totalNum, totalSize:",totalNum, totalSize,"\n"
         for i in range(totalNum, totalNum-recentnumber, -1):
             print "\nThis is No.%d email,and content is:" % i
             #p.retr('邮件号码')方法返回一个元组:(状态信息,邮件,邮件尺寸)
@@ -86,12 +90,16 @@ def email_get( user ,recentnumber = 10):
             sender = email.Header.decode_header(msg['From'])[0][0]
             receiver = email.Header.decode_header(msg['To'])[0][0]
 
-            showMessage( msg )
-            #PareMessageAttachMent( msg )    
+            print "subject: ", subject
+            print "receiver: ", receiver
+            #body = "inital value"
+            #print get_content( msg )
+            #print body
+            #get_attachment( msg )
                 
     except poplib.error_proto,e:  
         print "Login failed:",e  
-        sys.exit(1)
+        return False
 
 if __name__ == "__main__":
     print "This is my mail receive box\n"
@@ -99,4 +107,4 @@ if __name__ == "__main__":
     root = Account("linjiangxiangj@sina.cn")
 
     #call receive func
-    email_get(root)
+    email_get(root, 4)
