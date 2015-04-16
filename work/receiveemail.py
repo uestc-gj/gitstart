@@ -9,13 +9,15 @@ import os
 
 def get_content( msg ):
     if msg.is_multipart():
-        #contentlist = list()
+        contentstr = ""
         for part in msg.get_payload():
             content = get_content( part)
-            #contentlist.append(content)
-        #return contentlist
+            #print content
+            contentstr += content
+        return contentstr
     else:
         types = msg.get_content_type()
+        body = ""
         if types=='text/plain':
             try:
                body = msg.get_payload(decode=True)
@@ -66,6 +68,7 @@ def email_get( user ,recentnumber = 10):
     method for showing recent n messages,with input value of account and
     recentnumber shows the number of messages you want
     '''
+    email_list = list()
     try:  
         p=poplib.POP3(user.receiveserver)  
         p.user(user.username)
@@ -85,18 +88,25 @@ def email_get( user ,recentnumber = 10):
             # 形成mail message对象
             msg = email.message_from_file( buf )
             # 取出邮件中基本属性数据,待处理
+            messagelist = list()
             subject = email.Header.decode_header(msg['subject'])[0][0]
-            subcode =email.Header.decode_header(msg['subject'])[0][1]
+            #subcode = email.Header.decode_header(msg['subject'])[0][1]
             sender = email.Header.decode_header(msg['From'])[0][0]
             receiver = email.Header.decode_header(msg['To'])[0][0]
+            content = get_content( msg )
 
-            print "subject: ", subject
-            print "receiver: ", receiver
-            #body = "inital value"
-            #print get_content( msg )
-            #print body
+            messagelist.append(subject)
+            #messagelist.append(subcode)
+            messagelist.append(sender)
+            messagelist.append(receiver)
+            messagelist.append(content)
+
+            email_list.append(messagelist)
+            #print messagelist[4]
+
             #get_attachment( msg )
-                
+        return email_list
+
     except poplib.error_proto,e:  
         print "Login failed:",e  
         return False

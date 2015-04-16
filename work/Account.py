@@ -49,6 +49,25 @@ def save_an_account( username, password):
         file_object.writelines(list_of_text_strings)
         file_object.close( )
 
+def remove_an_account( name ):
+    filename = "./Accounts.txt"
+    file_object = open(filename, 'r')
+    #content is a list
+    content = file_object.readlines()
+    for line in content:
+        username = line.split(':',1)
+        if username[0] == "account":
+            if username[1].strip() == name:
+                index = content.index(line)
+                content.pop(index)#delete username
+                content.pop(index)#delete password
+                break
+    file_object.close( )
+
+    file_object = open(filename, 'w')
+    file_object.writelines(content)
+    file_object.close()
+
 def check_username( name ):
     '''
     read file and check duplicate emailaddress
